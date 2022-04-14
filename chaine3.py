@@ -21,11 +21,11 @@ def showgraph(matrix, dists):
 
     fig, axes = plt.subplots(3)
     for i in range(len(dists)):
-        axes[i].set(xlabel='temps t', ylabel='P(Xt)', ylim=(0.,1.))
-        axes[i].set_title(f'distribution n°{i}')
+        axes[i].set(xlabel='Temps t', ylabel='P(Xt)', ylim=(0.,1.))
+        axes[i].set_title(f'Distribution n°{i+1}')
         axes[i].label_outer()
         for j in range(len(matrix)):
-            axes[i].plot([pxt[j] for pxt in pxts[i]], label = f'state {j+1}')
+            axes[i].plot([pxt[j] for pxt in pxts[i]], label = f'Etat n°{j+1}')
 
     plt.subplots_adjust(hspace=0.3)
     plt.legend(loc='center left', bbox_to_anchor=(1, 1))

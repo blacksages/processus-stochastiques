@@ -20,8 +20,8 @@ trans_mat3 = np.array([[0, 0, 1, 0],[0, 0, 1, 0],[1, 0, 0, 0],[1/2, 1/2, 0, 0]])
 def showgraph(trans_mat):
     fig, axes = plt.subplots(len(trans_mat))
     for start_state in range(len(trans_mat)):
-        axes[start_state].set(xlabel='temps t', ylabel='P(Xt)')
-        axes[start_state].set_title(f'From state {start_state+1}')
+        axes[start_state].set(xlabel='Temps t', ylabel='Moyenne')
+        axes[start_state].set_title(f'Depuis l\'état n°{start_state+1}')
         axes[start_state].label_outer()
 
         state = start_state
@@ -37,7 +37,7 @@ def showgraph(trans_mat):
         states_prob = [[c/(i+1) for i,c in enumerate(states_count[s])]
                     for s in range(len(states_count))]
         for i in range(len(states_prob)):
-            axes[start_state].plot(states_prob[i], label = f'state {i+1}')
+            axes[start_state].plot(states_prob[i], label = f'Etat n°{i+1}')
     plt.subplots_adjust(hspace=0.3)
     plt.legend(loc='center left', bbox_to_anchor=(1, 1))
     plt.tight_layout()
