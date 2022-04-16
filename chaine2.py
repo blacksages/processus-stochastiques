@@ -80,14 +80,3 @@ for initial_state in range(len(trans_mat3)):
     print(f'\t\t\t[->]({9}) edge ({10});')
     
     print("\\end{tikzpicture}")
-
-
-
-
-#power1_10 = np.linalg.matrix_power(trans_mat1, 10)
-#print(power1_10"\n")
-#power2_50 = np.linalg.matrix_power(trans_mat2, 50)
-#print(power2_50)
-#power3_100 = np.linalg.matrix_power(trans_mat3, 100)
-#print(power3_100)
-
