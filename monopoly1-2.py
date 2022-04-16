@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-n_states = 42
-prison = [31, 32]
-chance = [7, 22, 38]
-chance_states = [0, 11, 15, 24, prison[0], 41]
-chancellerie = [2, 17, 35]
+n_states = 43
+prison = [31, 32, 33]
+chance = [7, 22, 39]
+chance_states = [0, 11, 15, 24, prison[0], 42]
+chancellerie = [2, 17, 36]
 chancellerie_states = [0, 1, prison[0]]
 
 def handle_states(states, dist, dice1, dice2, next_state, extra_throws):
@@ -25,10 +25,8 @@ def handle_states(states, dist, dice1, dice2, next_state, extra_throws):
 def get_next_state(start_state, dice1, dice2):
     move = dice1 + dice2
     if start_state in prison:
-        if dice1 == dice2:
+        if dice1 == dice2 or start_state == prison[len(prison) - 1]:
             next_state = prison[len(prison) - 1] + move
-        elif start_state == prison[len(prison) - 1]:
-            next_state = prison[0] - 1
         else:
             next_state = start_state + 1
     else:
