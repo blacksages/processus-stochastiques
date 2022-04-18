@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 n_states = 43
-prison = [31, 32, 33]
-chance = [7, 22, 39]
-chance_states = [0, 11, 15, 24, prison[0], 42]
-chancellerie = [2, 17, 36]
+to_prison = 32
+prison = [11, 12, 13]
+chance = [7, 25, 39]
+chance_states = [0, prison[0], 14, 18, 27, 42]
+chancellerie = [2, 20, 36]
 chancellerie_states = [0, 1, prison[0]]
 
 def handle_states(states, dist, dice1, dice2, next_state, extra_throws):
@@ -33,7 +34,11 @@ def get_next_state(start_state, dice1, dice2):
         next_state = start_state + move
         if start_state < prison[0] <= next_state:
             next_state += len(prison)
-    return next_state%n_states
+    if next_state%n_states == to_prison:
+        return prison[0]
+    else:
+        return next_state%n_states
+
 def proba(start_state, extra_throws):
     next_state = -1
     dist = [0 for _ in range(n_states)]
@@ -54,42 +59,17 @@ def proba(start_state, extra_throws):
                 dist[next_state] += 1/36
     return  dist
 
-# prison = [-1]
-# chance = []
-# chancellerie = []
-
-dist = [proba(i, 2) for i in range(n_states)]
-
-# plt.ylabel('Probability')
-# plt.xlabel('Data')
-# for i in range(len(dist)):
-#     plt.clf()
-#     plt.ylim((0.,1.))
-#     plt.xlim((0,len(dist)+1))
-#     plt.title(f'start state: {i}')
-#     plt.bar([i + 1 for i in range(len(dist))], dist[i], 0.9)
-#     plt.pause(0.2)
-
 def prob_xt(matrix, x0, t):
     power = np.linalg.matrix_power(matrix, t)
     return np.dot(x0,power)
+
+dist = [proba(i, 0) for i in range(n_states)]
 
 dist0 = [0 for _ in range(n_states)]
 dist0[0] = 1
 pxts = []
 for j in range(0, 30):
     pxts.append(prob_xt(dist, dist0, j))
-
-# for i in range(len(pxts)):
-#     plt.clf()
-#     plt.xlabel("Temps t")
-#     plt.ylabel("P(Xt)")
-#     plt.ylim((0.,1.))
-#     plt.xlim((0.,len(dist)+1))
-#     plt.title(f't = {i}')
-#     plt.tight_layout()
-#     plt.bar([i + 1 for i in range(len(dist))], pxts[i], 0.9)
-#     plt.pause(0.2)
 
 plt.clf()
 plt.xlabel("Temps t")
