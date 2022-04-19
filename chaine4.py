@@ -1,5 +1,4 @@
 import numpy as np
-import random
 
 
 trans_mat1 = np.array([[0, 1/2, 1/2],[1/3, 1/3, 1/3],[1/2, 1/2, 0]])

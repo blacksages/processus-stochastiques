@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import random
 import matplotlib.pyplot as plt
 
 n_states = 43
@@ -70,48 +71,81 @@ def prob_xt(matrix, x0, t):
     power = np.linalg.matrix_power(matrix, t)
     return np.dot(x0,power)
 
-def showgraph(trans_mat, initial_dist, times):
+def compute_pi(trans_mat, max_t = 100):
+    pi = [0 for i in range(n_states)]
+    pxt = start_dist[:]
+    for t in range(1,max_t + 1):
+        pxt = prob_xt(trans_mat, pxt, 1)
+        for i in range(n_states):
+            pi[i] += pxt[i]
+    for i in range(n_states):
+        pi[i] /= max_t
+    return pi
+
+def transition_funct(matrix, state):
+    prob = random.uniform(0, 1)
+    if prob <= matrix[state][0]:
+        return 0
+    matrix_count = 0
+    for i in range(1, len(matrix)):
+        matrix_count += matrix[state] [i - 1]
+        if prob >= matrix_count and prob <= matrix[state][i] + matrix_count:
+            return i
+    return 0
+
+def avg_distance(from_state, to_state, trans_mat, n_step = 100):
+    total = 0
+    for i in range(n_step):
+        next_state = from_state
+        count = 0
+        while next_state != to_state or count == 0:
+            count += 1
+            next_state = transition_funct(trans_mat, next_state)
+        total += count
+    return total/n_step
+
+def savegraph(trans_mat, initial_dist, times):
     fig, axes = plt.subplots(len(times))
+    color = ['blue' for i in range(len(trans_mat))]
+    for i in prison:
+        color[i] = 'black'
+    for i in chance:
+        color[i] = 'green'
+    for i in chancellerie:
+        color[i] = 'brown'
     for i,t in enumerate(times):
         axes[i].set(xlabel='Temps t', ylabel='P(Xt)')
         axes[i].set_title(f't = {t}')
         axes[i].label_outer()
         pxt = prob_xt(trans_mat, initial_dist, t)
-        axes[i].set(ylim=(0.,1.), xlim=(0.,len(trans_mat)+1))
-        axes[i].bar([i + 1 for i in range(len(dist))], pxt, 0.9)
+        axes[i].set(ylim=(0.,0.2), xlim=(0.,len(trans_mat)+1))
+        axes[i].bar([i + 1 for i in range(len(trans_mat))], pxt, 0.9, color = color)
     plt.subplots_adjust(hspace=0.3)
     plt.tight_layout()
-    plt.show()
+    plt.savefig('monopoly4a')
 
-extra_throws = 2
-throws_prison = True
-dist = [proba(i) for i in range(n_states)]
+extra_throws = 0
+throws_prison = False
+trans_mat = [proba(i) for i in range(n_states)]
 
-showgraph(dist, start_dist, [1,3,10])
+savegraph(trans_mat, start_dist, [1,3,10])
 
-max_t = 40
-pi_y = [0 for i in range(n_states)]
-for t in range(1,max_t + 1):
-    xt = prob_xt(dist, start_dist, t)
-    for i in range(n_states):
-        pi_y[i] += xt[i]
-for i in range(n_states):
-    pi_y[i] /= max_t
+pi = compute_pi(trans_mat)
 
-with open('cases.txt', 'r') as file:
+with open('cases.txt', 'r', encoding="utf-8") as file:
     spaces = [line for line in file]
-with open('monopoly4.txt', 'w', encoding="utf-8") as file:
+with open('monopoly4et6.txt', 'w', encoding="utf-8") as file:
     file.write('============\n')
     file.write('==== 4b ====\n')
     file.write('============\n')
-    pi_prison = sum([pi_y[i] for i in range(prison[0], prison[len(prison) - 1] + 1)])
+    pi_prison = sum([pi[i] for i in range(prison[0], prison[len(prison) - 1] + 1)])
     data = zip([el  for l in [[space[:-1] for space in spaces[:prison[0] - 1]],
                               ['Prison', 'Prison (visite)'],
                               [space[:-1] for space in spaces[prison[0]:]]]
                     for el in l],
-               [el  for l in [pi_y[:prison[0] - 1],
-                              [pi_prison, pi_y[prison[0] - 1]],
-                              pi_y[prison[len(prison) - 1] + 1:]]
+               [el  for l in [pi[:prison[0] - 1],
+                              [pi_prison, pi[prison[0] - 1]],
+                              pi[prison[len(prison) - 1] + 1:]]
                     for el in l])
     index = [el for l in [[str(i) for i in range(1, prison[0])],
                           [str(prison[0]) + 'a', str(prison[0]) + 'b'],
@@ -124,4 +158,22 @@ with open('monopoly4.txt', 'w', encoding="utf-8") as file:
     file.write('==== 4c ====\n')
     file.write('============\n')
     bad_df = df.index.isin([str(prison[0]) + 'a', str(prison[0]) + 'b'])
-    file.write(f'Rue à acheter en priorité: {df.loc[df.loc[~bad_df][columns[1]].idxmax()][columns[0]]}')
+    best_property = df.loc[df.loc[~bad_df][columns[1]].idxmax()]
+    file.write(f'Rue à acheter en priorité: {best_property.index.tolist()[0]}. {best_property[columns[0]]}\n')
+    file.write('============\n')
+    file.write('==== 4d ====\n')
+    file.write('============\n')
+    file.write(f'Temps moyen entre jusqu\'à la prison: {avg_distance(0, prison[0], trans_mat)}\n')
+    file.write(f'Temps moyen entre deux allers en prison: {avg_distance(prison[len(prison) - 1], prison[0], trans_mat)}\n')
+    file.write('============\n')
+    file.write('==== 6 ====\n')
+    file.write('============\n')
+    extra_throws = 2
+    throws_prison = True
+    trans_mat = [proba(i) for i in range(n_states)]
+    pi = compute_pi(trans_mat)
+    pi_prison = sum([pi[i] for i in range(prison[0], prison[len(prison) - 1] + 1)])
+    file.write(f'Proportion moyenne du temps en prison: {pi_prison}\n')
+    file.write(f'Temps moyen entre jusqu\'à la prison: {avg_distance(0, prison[0], trans_mat)}\n')
+    file.write(f'Temps moyen entre deux allers en prison: {avg_distance(prison[len(prison) - 1], prison[0], trans_mat)}\n')
+
