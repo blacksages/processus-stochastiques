@@ -8,14 +8,16 @@ chance = [7, 25, 39]
 chance_states = [0, prison[0], 14, 18, 27, 42]
 chancellerie = [2, 20, 36]
 chancellerie_states = [0, 1, prison[0]]
+extra_throws = 2
+throws_prison = False
 
-def handle_states(states, dist, dice1, dice2, next_state, extra_throws):
-    if dice1 == dice2 and extra_throws > 0:
+def handle_states(states, dist, dice1, dice2, next_state, throw):
+    if dice1 == dice2 and throw < extra_throws:
         for state in states:
-            temp_dist = proba(state, extra_throws - 1)
+            temp_dist = proba(state, throw + 1)
             for i in range(n_states):
                 dist[i] += (1/36)*(1/16)*temp_dist[i]
-        temp_dist = proba(next_state, extra_throws - 1)
+        temp_dist = proba(next_state, throw + 1)
         for i in range(n_states):
             dist[i] += (1/36)*((16 - len(states))/16)*temp_dist[i]
     else:
@@ -23,13 +25,15 @@ def handle_states(states, dist, dice1, dice2, next_state, extra_throws):
         for state in states:
             dist[state] += (1/36) * (1/16)
 
-def get_next_state(start_state, dice1, dice2):
+def get_next_state(start_state, dice1, dice2, throw):
     move = dice1 + dice2
     if start_state in prison:
         if dice1 == dice2 or start_state == prison[len(prison) - 1]:
             next_state = prison[len(prison) - 1] + move
         else:
             next_state = start_state + 1
+    elif dice1 == dice2 and throw == extra_throws and throws_prison == True:
+        next_state = prison[0]
     else:
         next_state = start_state + move
         if start_state < prison[0] <= next_state:
@@ -39,20 +43,20 @@ def get_next_state(start_state, dice1, dice2):
     else:
         return next_state%n_states
 
-def proba(start_state, extra_throws):
+def proba(start_state, throw = 0):
     next_state = -1
     dist = [0 for _ in range(n_states)]
-    if extra_throws < 0:
+    if throw > extra_throws:
         return dist
     for dice1 in range(1, 7):
         for dice2 in range(1, 7):
-            next_state = get_next_state(start_state, dice1, dice2)
+            next_state = get_next_state(start_state, dice1, dice2, throw)
             if next_state in chance:
-                handle_states(chance_states, dist, dice1, dice2, next_state, extra_throws)
+                handle_states(chance_states, dist, dice1, dice2, next_state, throw)
             elif next_state in chancellerie:
-                handle_states(chancellerie_states, dist, dice1, dice2, next_state, extra_throws)
+                handle_states(chancellerie_states, dist, dice1, dice2, next_state, throw)
             elif dice1 == dice2 and extra_throws > 0:
-                temp_dist = proba(next_state, extra_throws - 1)
+                temp_dist = proba(next_state, throw + 1)
                 for i in range(n_states):
                     dist[i] += (1/36)*temp_dist[i]
             else:
@@ -63,7 +67,9 @@ def prob_xt(matrix, x0, t):
     power = np.linalg.matrix_power(matrix, t)
     return np.dot(x0,power)
 
-dist = [proba(i, 0) for i in range(n_states)]
+extra_throws = 2
+throws_prison = False
+dist = [proba(i) for i in range(n_states)]
 
 dist0 = [0 for _ in range(n_states)]
 dist0[0] = 1
