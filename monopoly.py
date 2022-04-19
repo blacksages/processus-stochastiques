@@ -1,8 +1,9 @@
-import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 n_states = 43
-to_prison = 32
+to_prison = 33
 prison = [11, 12, 13]
 chance = [7, 25, 39]
 chance_states = [0, prison[0], 14, 18, 27, 42]
@@ -10,6 +11,8 @@ chancellerie = [2, 20, 36]
 chancellerie_states = [0, 1, prison[0]]
 extra_throws = 2
 throws_prison = False
+start_dist = [0 for _ in range(n_states)]
+start_dist[0] = 1
 
 def handle_states(states, dist, dice1, dice2, next_state, throw):
     if dice1 == dice2 and throw < extra_throws:
@@ -67,27 +70,58 @@ def prob_xt(matrix, x0, t):
     power = np.linalg.matrix_power(matrix, t)
     return np.dot(x0,power)
 
+def showgraph(trans_mat, initial_dist, times):
+    fig, axes = plt.subplots(len(times))
+    for i,t in enumerate(times):
+        axes[i].set(xlabel='Temps t', ylabel='P(Xt)')
+        axes[i].set_title(f't = {t}')
+        axes[i].label_outer()
+        pxt = prob_xt(trans_mat, initial_dist, t)
+        axes[i].set(ylim=(0.,1.), xlim=(0.,len(trans_mat)+1))
+        axes[i].bar([i + 1 for i in range(len(dist))], pxt, 0.9)
+    plt.subplots_adjust(hspace=0.3)
+    plt.tight_layout()
+    plt.show()
+
 extra_throws = 2
-throws_prison = False
+throws_prison = True
 dist = [proba(i) for i in range(n_states)]
 
-dist0 = [0 for _ in range(n_states)]
-dist0[0] = 1
-pxts = []
-for j in range(0, 30):
-    pxts.append(prob_xt(dist, dist0, j))
+showgraph(dist, start_dist, [1,3,10])
 
-plt.clf()
-plt.xlabel("Temps t")
-plt.ylabel("P(Xt)")
-plt.ylim((0.,1.))
-plt.xlim((0.,len(dist)+1))
-plt.tight_layout()
-plt.bar([i + 1 for i in range(len(dist))], pxts[0], 0.9)
-plt.pause(0.5)
-plt.bar([i + 1 for i in range(len(dist))], pxts[1], 0.9)
-plt.pause(0.5)
-plt.bar([i + 1 for i in range(len(dist))], pxts[2], 0.9)
-plt.pause(0.5)
-plt.bar([i + 1 for i in range(len(dist))], pxts[3], 0.9)
-plt.show()
+max_t = 40
+pi_y = [0 for i in range(n_states)]
+for t in range(1,max_t + 1):
+    xt = prob_xt(dist, start_dist, t)
+    for i in range(n_states):
+        pi_y[i] += xt[i]
+for i in range(n_states):
+    pi_y[i] /= max_t
+
+with open('cases.txt', 'r') as file:
+    spaces = [line for line in file]
+with open('monopoly4.txt', 'w', encoding="utf-8") as file:
+    file.write('============\n')
+    file.write('==== 4b ====\n')
+    file.write('============\n')
+    pi_prison = sum([pi_y[i] for i in range(prison[0], prison[len(prison) - 1] + 1)])
+    data = zip([el  for l in [[space[:-1] for space in spaces[:prison[0] - 1]],
+                              ['Prison', 'Prison (visite)'],
+                              [space[:-1] for space in spaces[prison[0]:]]]
+                    for el in l],
+               [el  for l in [pi_y[:prison[0] - 1],
+                              [pi_prison, pi_y[prison[0] - 1]],
+                              pi_y[prison[len(prison) - 1] + 1:]]
+                    for el in l])
+    index = [el for l in [[str(i) for i in range(1, prison[0])],
+                          [str(prison[0]) + 'a', str(prison[0]) + 'b'],
+                          [str(i) for i in range(prison[0] + 1, len(spaces) + 1)]]
+                for el in l]
+    columns = ['Case', 'Proportion moyenne du temps']
+    df = pd.DataFrame(data = data, index = index, columns = columns)
+    file.write(df.to_string()+'\n')
+    file.write('============\n')
+    file.write('==== 4c ====\n')
+    file.write('============\n')
+    bad_df = df.index.isin([str(prison[0]) + 'a', str(prison[0]) + 'b'])
+    file.write(f'Rue à acheter en priorité: {df.loc[df.loc[~bad_df][columns[1]].idxmax()][columns[0]]}')
