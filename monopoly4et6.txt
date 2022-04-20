@@ -2,47 +2,47 @@
 ==== 4b ====
 ============
                              Case  Proportion moyenne du temps
-1                           Start                     0.028638
-2            Louvain Rue de Diest                     0.024230
-3                    Chancellerie                     0.016587
-4        Malines Rue St Catherine                     0.021142
-5             Impôt sur le revenu                     0.021599
-6                    Gare du Nord                     0.022232
-7              Tournai Rue Royale                     0.023031
-8                          Chance                     0.014768
-9               Dinant Rue Grande                     0.023363
-10                 Mons Grand'Rue                     0.022782
-11a                        Prison                     0.086822
-11b               Prison (visite)                     0.022294
-12        Namur Avenue de la Gare                     0.025669
-13          Centrales électriques                     0.023706
-14    Charleroi Rue de Marcinelle                     0.022269
-15      Knokke Avenue du Littoral                     0.024761
-16                  Gare Centrale                     0.028762
-17         Bruges Rue des Pierres                     0.027050
-18                   Chancellerie                     0.021531
-19       Ostende Rue Adolphe Buyl                     0.028243
-20           Coutrai Rue de Lille                     0.026300
-21                        Parking                     0.027941
-22          Spa Place du Monument                     0.026009
-23                         Chance                     0.017252
-24                Arlon Grand'Rue                     0.025480
-25            Hasselt Grand'Place                     0.029865
-26              Tramways Vicinaux                     0.025430
-27        Liège Place St. Lambert                     0.025436
-28        Bruxelles Rue de Laeken                     0.025307
-29   Cie. Intercommunale des Eaux                     0.025022
-30            Gand Rue des Champs                     0.024793
+1                           Start                     0.029084
+2            Louvain Rue de Diest                     0.024738
+3                    Chancellerie                     0.016798
+4        Malines Rue St Catherine                     0.021178
+5             Impôt sur le revenu                     0.021403
+6                    Gare du Nord                     0.021793
+7              Tournai Rue Royale                     0.022330
+8                          Chance                     0.014148
+9               Dinant Rue Grande                     0.022542
+10                 Mons Grand'Rue                     0.022093
+11a                        Prison                     0.088180
+11b               Prison (visite)                     0.021710
+12        Namur Avenue de la Gare                     0.025125
+13          Centrales électriques                     0.023376
+14    Charleroi Rue de Marcinelle                     0.022049
+15      Knokke Avenue du Littoral                     0.024517
+16                  Gare Centrale                     0.028431
+17         Bruges Rue des Pierres                     0.026823
+18                   Chancellerie                     0.021368
+19       Ostende Rue Adolphe Buyl                     0.028116
+20           Coutrai Rue de Lille                     0.026186
+21                        Parking                     0.027909
+22          Spa Place du Monument                     0.025977
+23                         Chance                     0.017272
+24                Arlon Grand'Rue                     0.025498
+25            Hasselt Grand'Place                     0.029886
+26              Tramways Vicinaux                     0.025523
+27        Liège Place St. Lambert                     0.025562
+28        Bruxelles Rue de Laeken                     0.025469
+29   Cie. Intercommunale des Eaux                     0.025216
+30            Gand Rue des Champs                     0.025017
 31                    En Prison !                     0.000000
-32            Namur Rue de l'Ange                     0.025174
-33           Verviers Place Verte                     0.024435
-34                   Chancellerie                     0.019267
-35           Hasselt Rue du Démer                     0.023033
-36                   Gare du midi                     0.022205
-37                         Chance                     0.013194
-38           Anvers Place de Meir                     0.019962
-39           Impôt Supplémentaire                     0.019998
-40            Bruxelles Rue Neuve                     0.024419
+32            Namur Rue de l'Ange                     0.025462
+33           Verviers Place Verte                     0.024742
+34                   Chancellerie                     0.019532
+35           Hasselt Rue du Démer                     0.023378
+36                   Gare du midi                     0.022567
+37                         Chance                     0.013427
+38           Anvers Place de Meir                     0.020346
+39           Impôt Supplémentaire                     0.020411
+40            Bruxelles Rue Neuve                     0.024819
 ============
 ==== 4c ====
 ============
@@ -50,11 +50,11 @@ Rue à acheter en priorité: Case. Hasselt Grand'Place
 ============
 ==== 4d ====
 ============
-Temps moyen entre jusqu'à la prison: 25.16
-Temps moyen entre deux allers en prison: 21.82
+Temps moyen jusqu'à la prison: 28.912
+Temps moyen entre deux allers en prison: 27.678
 ============
 ==== 6 ====
 ============
-Proportion moyenne du temps en prison: 0.07702777607897618
-Temps moyen entre jusqu'à la prison: 31.75
-Temps moyen entre deux allers en prison: 28.52
+Proportion moyenne du temps en prison: 0.1816488550751291
+Temps moyen jusqu'à la prison: 13.421
+Temps moyen entre deux allers en prison: 13.489

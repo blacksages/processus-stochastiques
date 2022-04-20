@@ -10,59 +10,53 @@ chance = [7, 25, 39]
 chance_states = [0, prison[0], 14, 18, 27, 42]
 chancellerie = [2, 20, 36]
 chancellerie_states = [0, 1, prison[0]]
-extra_throws = 2
+throws_to_prison = 3
 throws_prison = False
-start_dist = [0 for _ in range(n_states)]
-start_dist[0] = 1
 
-def handle_states(states, dist, dice1, dice2, next_state, throw):
-    if dice1 == dice2 and throw < extra_throws:
-        for state in states:
-            temp_dist = proba(state, throw + 1)
-            for i in range(n_states):
-                dist[i] += (1/36)*(1/16)*temp_dist[i]
-        temp_dist = proba(next_state, throw + 1)
-        for i in range(n_states):
-            dist[i] += (1/36)*((16 - len(states))/16)*temp_dist[i]
-    else:
-        dist[next_state] += (1/36) * (16 - len(states))/16
-        for state in states:
-            dist[state] += (1/36) * (1/16)
+def handle_states(states, dist, next_state):
+    dist[next_state] += (1/36) * (16 - len(states))/16
+    for state in states:
+        dist[int(next_state/n_states) * n_states + state] += (1/36) * (1/16)
 
-def get_next_state(start_state, dice1, dice2, throw):
+def get_next_state(start_state, dice1, dice2):
     move = dice1 + dice2
+    offset = int(start_state/n_states) * n_states if throws_prison is True else 0
+
     if start_state in prison:
-        if dice1 == dice2 or start_state == prison[len(prison) - 1]:
+        if dice1 == dice2 or start_state%n_states == prison[len(prison) - 1]:  # On sort de prison
             next_state = prison[len(prison) - 1] + move
-        else:
+            if throws_prison is True and dice1 == dice2:
+                offset = n_states
+        else: # On reste en prison
             next_state = start_state + 1
-    elif dice1 == dice2 and throw == extra_throws and throws_prison == True:
+    elif throws_prison is True\
+         and dice1 == dice2\
+         and int(1 + start_state/n_states) == throws_to_prison: # On a fait trop de double => prison
         next_state = prison[0]
+        offset = 0
     else:
+        offset += n_states if throws_prison is True and dice1 == dice2 else 0
         next_state = start_state + move
-        if start_state < prison[0] <= next_state:
+        if start_state%n_states < prison[0] <= next_state%n_states:
             next_state += len(prison)
     if next_state%n_states == to_prison:
         return prison[0]
     else:
-        return next_state%n_states
+        return offset + next_state%n_states
 
-def proba(start_state, throw = 0):
+def proba(start_state):
     next_state = -1
-    dist = [0 for _ in range(n_states)]
-    if throw > extra_throws:
-        return dist
+    if throws_prison is True:
+        dist = [0 for i in range(throws_to_prison * n_states)]
+    else:
+        dist = [0 for i in range(n_states)]
     for dice1 in range(1, 7):
         for dice2 in range(1, 7):
-            next_state = get_next_state(start_state, dice1, dice2, throw)
+            next_state = get_next_state(start_state, dice1, dice2)
             if next_state in chance:
-                handle_states(chance_states, dist, dice1, dice2, next_state, throw)
+                handle_states(chance_states, dist, next_state)
             elif next_state in chancellerie:
-                handle_states(chancellerie_states, dist, dice1, dice2, next_state, throw)
-            elif dice1 == dice2 and extra_throws > 0:
-                temp_dist = proba(next_state, throw + 1)
-                for i in range(n_states):
-                    dist[i] += (1/36)*temp_dist[i]
+                handle_states(chancellerie_states, dist, next_state)
             else:
                 dist[next_state] += 1/36
     return  dist
@@ -71,9 +65,10 @@ def prob_xt(matrix, x0, t):
     power = np.linalg.matrix_power(matrix, t)
     return np.dot(x0,power)
 
-def compute_pi(trans_mat, max_t = 100):
-    pi = [0 for i in range(n_states)]
-    pxt = start_dist[:]
+def compute_pi(trans_mat, max_t = 1000):
+    pi = [0 for i in range(len(trans_mat))]
+    pxt = [0 for i in range(len(trans_mat))]
+    pxt[0] = 1
     for t in range(1,max_t + 1):
         pxt = prob_xt(trans_mat, pxt, 1)
         for i in range(n_states):
@@ -93,7 +88,7 @@ def transition_funct(matrix, state):
             return i
     return 0
 
-def avg_distance(from_state, to_state, trans_mat, n_step = 100):
+def avg_distance(from_state, to_state, trans_mat, n_step = 1000):
     total = 0
     for i in range(n_step):
         next_state = from_state
@@ -124,10 +119,10 @@ def savegraph(trans_mat, initial_dist, times):
     plt.tight_layout()
     plt.savefig('monopoly4a')
 
-extra_throws = 0
 throws_prison = False
 trans_mat = [proba(i) for i in range(n_states)]
-
+start_dist = [0 for i in range(n_states)]
+start_dist[0] = 1
 savegraph(trans_mat, start_dist, [1,3,10])
 
 pi = compute_pi(trans_mat)
@@ -163,17 +158,21 @@ with open('monopoly4et6.txt', 'w', encoding="utf-8") as file:
     file.write('============\n')
     file.write('==== 4d ====\n')
     file.write('============\n')
-    file.write(f'Temps moyen entre jusqu\'à la prison: {avg_distance(0, prison[0], trans_mat)}\n')
+    file.write(f'Temps moyen jusqu\'à la prison: {avg_distance(0, prison[0], trans_mat)}\n')
     file.write(f'Temps moyen entre deux allers en prison: {avg_distance(prison[len(prison) - 1], prison[0], trans_mat)}\n')
     file.write('============\n')
     file.write('==== 6 ====\n')
     file.write('============\n')
-    extra_throws = 2
+    throws_to_prison = 3
     throws_prison = True
-    trans_mat = [proba(i) for i in range(n_states)]
+    start_dist = [0 for i in range(throws_to_prison * n_states)]
+    start_dist[0] = 1
+    trans_mat = [proba(i) for i in range(throws_to_prison * n_states)]
     pi = compute_pi(trans_mat)
+    pi_tables = [pi[i * n_states:(i + 1) * n_states] for i in range(throws_to_prison)]
+    pi = [sum(both_pi) for both_pi in zip(*pi_tables)]
     pi_prison = sum([pi[i] for i in range(prison[0], prison[len(prison) - 1] + 1)])
     file.write(f'Proportion moyenne du temps en prison: {pi_prison}\n')
-    file.write(f'Temps moyen entre jusqu\'à la prison: {avg_distance(0, prison[0], trans_mat)}\n')
+    file.write(f'Temps moyen jusqu\'à la prison: {avg_distance(0, prison[0], trans_mat)}\n')
     file.write(f'Temps moyen entre deux allers en prison: {avg_distance(prison[len(prison) - 1], prison[0], trans_mat)}\n')
 
