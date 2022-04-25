@@ -117,7 +117,7 @@ def savegraph(trans_mat, initial_dist, times):
         axes[i].bar([i + 1 for i in range(len(trans_mat))], pxt, 0.9, color = color)
     plt.subplots_adjust(hspace=0.3)
     plt.tight_layout()
-    plt.savefig('monopoly4a')
+    plt.savefig('monopoly2.4a')
 
 throws_prison = False
 trans_mat = [proba(i) for i in range(n_states)]
@@ -125,11 +125,13 @@ start_dist = [0 for i in range(n_states)]
 start_dist[0] = 1
 savegraph(trans_mat, start_dist, [1,3,10])
 
+import pandas as pd 
+pd.DataFrame(np.array(trans_mat)).to_csv("monopoly_trans_mat2.2.csv")
 pi = compute_pi(trans_mat)
 
 with open('cases.txt', 'r', encoding="utf-8") as file:
     spaces = [line for line in file]
-with open('monopoly4et6.txt', 'w', encoding="utf-8") as file:
+with open('monopoly2.4et2.6.txt', 'w', encoding="utf-8") as file:
     file.write('============\n')
     file.write('==== 4b ====\n')
     file.write('============\n')

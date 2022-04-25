@@ -50,11 +50,11 @@ Rue à acheter en priorité: Case. Hasselt Grand'Place
 ============
 ==== 4d ====
 ============
-Temps moyen jusqu'à la prison: 28.912
-Temps moyen entre deux allers en prison: 27.678
+Temps moyen jusqu'à la prison: 28.565
+Temps moyen entre deux allers en prison: 29.554
 ============
 ==== 6 ====
 ============
 Proportion moyenne du temps en prison: 0.1816488550751291
-Temps moyen jusqu'à la prison: 13.421
-Temps moyen entre deux allers en prison: 13.489
+Temps moyen jusqu'à la prison: 13.156
+Temps moyen entre deux allers en prison: 13.132
